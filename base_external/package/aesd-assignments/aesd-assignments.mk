@@ -16,6 +16,10 @@ AESD_ASSIGNMENTS_GIT_SUBMODULES = YES
 
 define AESD_ASSIGNMENTS_BUILD_CMDS
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/finder-app all
+	$(MAKE) -C $(@D)/server \
+		CC="$(TARGET_CC)" \
+		CFLAGS="$(TARGET_CFLAGS)" \
+		LDFLAGS="$(TARGET_LDFLAGS)"
 endef
 
 # TODO add your writer, finder and finder-test utilities/scripts to the installation steps below
@@ -34,8 +38,11 @@ define AESD_ASSIGNMENTS_INSTALL_TARGET_CMDS
 	# Install writer binary (built in BUILD_CMDS)
 	$(INSTALL) -m 0755 $(@D)/finder-app/writer $(TARGET_DIR)/usr/bin/
 
-	# Optional: if you have tester.sh in your A3 repo
-	# $(INSTALL) -m 0755 $(@D)/finder-app/tester.sh $(TARGET_DIR)/usr/bin/
+	$(INSTALL) -D -m 0755 $(@D)/server/aesdsocket \
+		$(TARGET_DIR)/usr/bin/aesdsocket
+
+	$(INSTALL) -D -m 0755 $(@D)/server/aesdsocket-start-stop \
+		$(TARGET_DIR)/etc/init.d/S99aesdsocket
 endef
 
 
